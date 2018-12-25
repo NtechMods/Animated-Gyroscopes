@@ -17,7 +17,7 @@ namespace nukeguardRotatingGyro
         private float HingePosX = 0f; // Hinge position on the X axis. 0 is center.
         private float HingePosY = -0.051649f; // Hinge position on the Y axis. 0 is center.
         private float HingePosZ = -0.088645f; // Hinge position on the Z axis. 0 is center.
-        private float RotX = 0.08f; // Rotation on the X axis. 0 is no rotation.
+        private float RotX = 0.04f; // Rotation on the X axis. 0 is no rotation.
         private float RotY = 0f; // Rotation on the Y axis. 0 is no rotation.
         private float RotZ = 0f; // Rotation on the Z axis. 0 is no rotation.
         public bool InitSubpart = true;
