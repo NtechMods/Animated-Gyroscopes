@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!--Begin BlockCategories -->
+
+<!--Begin Cubeblocks definitions-->
+  <CubeBlocks>
+  
+  
+      <Definition xsi:type="MyObjectBuilder_GyroDefinition">
+      <Id>
+        <TypeId>Gyro</TypeId>
+        <SubtypeId>LBAnimGyro</SubtypeId>
+      </Id>
+      <DisplayName>Gyroscope</DisplayName>
+      <Icon>Textures\GUI\Icons\Cubes\gyro.dds</Icon>
+      <CubeSize>Large</CubeSize>
+      <BlockTopology>TriangleMesh</BlockTopology>
+      <Size x="1" y="1" z="1" />
+      <ModelOffset x="0" y="0" z="0" />
+      <Model>Models\Cubes\LBAnimGyro.mwm</Model>
+      <Components>
+        <Component Subtype="SteelPlate" Count="500" />
+        <Component Subtype="Construction" Count="40" />
+        <Component Subtype="LargeTube" Count="4" />
+        <Component Subtype="MetalGrid" Count="50" />
+        <Component Subtype="Motor" Count="4" />
+        <Component Subtype="Computer" Count="5" />
+        <Component Subtype="SteelPlate" Count="100" />
+      </Components>
+      <CriticalComponent Subtype="Computer" Index="0" />
+      <MountPoints>
+		<MountPoint Side="Front" StartX="0.20" StartY="0.00" EndX="0.80" EndY="0.07" />
+		<MountPoint Side="Back" StartX="0.20" StartY="0.00" EndX="0.80" EndY="0.07" />
+		<MountPoint Side="Left" StartX="0.20" StartY="0.00" EndX="0.80" EndY="0.07" />
+		<MountPoint Side="Right" StartX="0.20" StartY="0.00" EndX="0.80" EndY="0.07" />
+		<MountPoint Side="Bottom" StartX="0.20" StartY="0.20" EndX="0.80" EndY="0.80" />
+      </MountPoints>
+      <BuildProgressModels>
+        <Model BuildPercentUpperBound="0.33" File="Models\Cubes\Large\GyroscopeConstruction_1.mwm" />
+        <Model BuildPercentUpperBound="0.66" File="Models\Cubes\Large\GyroscopeConstruction_2.mwm" />
+        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\GyroscopeConstruction_3.mwm" />
+      </BuildProgressModels>
+      <BlockPairName>Gyroscope</BlockPairName>
+      <MirroringY>Z</MirroringY>
+      <MirroringZ>Y</MirroringZ>
+      <EdgeType>Light</EdgeType>
+      <BuildTimeSeconds>45</BuildTimeSeconds>
+      <PrimarySound>BlockGyroscope</PrimarySound>      
+      <ResourceSinkGroup>Gyro</ResourceSinkGroup>
+      <ForceMagnitude>6.36E+07</ForceMagnitude>
+      <RequiredPowerInput>0.00003</RequiredPowerInput>      
+      <EmissiveColorPreset>Default</EmissiveColorPreset>
+      <DamageEffectId>212</DamageEffectId>
+      <DamagedSound>ParticleHeavyMech</DamagedSound>
+    </Definition>
+	
+    <Definition xsi:type="MyObjectBuilder_GyroDefinition">
+      <Id>
+        <TypeId>Gyro</TypeId>
+        <SubtypeId>SBAnimGyro</SubtypeId>
+      </Id>
+      <DisplayName>Gyroscope</DisplayName>
+      <Icon>Textures\GUI\Icons\Cubes\gyro.dds</Icon>
+      <CubeSize>Small</CubeSize>
+      <BlockTopology>TriangleMesh</BlockTopology>
+      <Size x="1" y="1" z="1" />
+      <ModelOffset x="0" y="0" z="0" />
+      <Model>Models\Cubes\Small\SBAnimGyro.mwm</Model>
+      <Components>
+        <Component Subtype="SteelPlate" Count="15" />
+        <Component Subtype="Construction" Count="5" />
+        <Component Subtype="LargeTube" Count="1" />
+        <Component Subtype="Motor" Count="2" />
+        <Component Subtype="Computer" Count="3" />
+        <Component Subtype="SteelPlate" Count="10" />
+      </Components>
+      <CriticalComponent Subtype="Computer" Index="0" />
+      <MountPoints>
+        <MountPoint Side="Bottom" StartX="0" StartY="0" EndX="1" EndY="1" />
+      </MountPoints>
+      <BuildProgressModels>
+        <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\GyroscopeConstruction_1.mwm" />
+        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\GyroscopeConstruction_2.mwm" />
+      </BuildProgressModels>
+      <BlockPairName>Gyroscope</BlockPairName>
+      <MirroringY>Z</MirroringY>
+      <MirroringZ>Y</MirroringZ>
+      <EdgeType>Light</EdgeType>
+      <BuildTimeSeconds>45</BuildTimeSeconds>
+      <PrimarySound>BlockGyroscope</PrimarySound>      
+      <ResourceSinkGroup>Gyro</ResourceSinkGroup>
+      <ForceMagnitude>448000</ForceMagnitude>
+      <RequiredPowerInput>0.0000006</RequiredPowerInput>     
+      <EmissiveColorPreset>Default</EmissiveColorPreset>
+      <DamageEffectId>212</DamageEffectId>
+      <DamagedSound>ParticleHeavyMech</DamagedSound>
+    </Definition>
+<!-- End -->
+ </CubeBlocks>
+<!-- End CubeBlocks -->
+
+<!-- Begin BlockPositions-->
+ <BlockPositions>
+     <BlockPosition>
+      <Name>AnimatedGyros</Name>
+      <Position>
+        <X>4</X>
+        <Y>25</Y>
+      </Position>
+    </BlockPosition>
+ </BlockPositions>
+<!--End Block Positions-->
+</Definitions>
