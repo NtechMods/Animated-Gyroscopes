@@ -17,7 +17,7 @@ namespace nukeguardRotatingGyroSmall
         private float HingePosX = 0f; // Hinge position on the X axis. 0 is center.
         private float HingePosY = 0f; // Hinge position on the Y axis. 0 is center.
         private float HingePosZ = 0f; // Hinge position on the Z axis. 0 is center.
-        private float RotX = 0.06f; // Rotation on the X axis. 0 is no rotation.
+        private float RotX = 0.01f; // Rotation on the X axis. 0 is no rotation.
         private float RotY = 0f; // Rotation on the Y axis. 0 is no rotation.
         private float RotZ = 0f; // Rotation on the Z axis. 0 is no rotation.
         public bool InitSubpart = true;
@@ -54,7 +54,7 @@ namespace nukeguardRotatingGyroSmall
                 else newRotMatrixX = Matrix.Identity;
                 if (InitSubpart)
                 {
-                    SGyro_block.TryGetSubpart("weight", out SGyroSubpart);
+                    SGyro_block.TryGetSubpart("SAnimGyro", out SGyroSubpart);
                     InitSubpart = false;
                 }
 
@@ -87,12 +87,12 @@ namespace nukeguardRotatingGyroSmall
         {
             if (MyAPIGateway.Utilities.IsDedicated) return;
             MyEntitySubpart SGyrosubpart;
-            if (SGyro_block != null && SGyro_block.TryGetSubpart("weight", out SGyrosubpart) && SGyro_block.IsWorking && SGyro_block.IsFunctional)
+            if (SGyro_block != null && SGyro_block.IsWorking && SGyro_block.IsFunctional && SGyro_block.TryGetSubpart("SAnimGyro", out SGyrosubpart))
             {
                 var _emcolor = SGyro_block.GyroPower;
                 SGyrosubpart.SetEmissiveParts("Emissive", Color.Green, _emcolor);
             }
-            else if (SGyro_block != null && SGyro_block.TryGetSubpart("weight", out SGyrosubpart))
+            else if (SGyro_block != null && SGyro_block.TryGetSubpart("SAnimGyro", out SGyrosubpart))
             {
                 var _emoff = SGyro_block.GyroPower;
                 SGyrosubpart.SetEmissiveParts("Emissive", Color.Red, _emoff);
@@ -102,7 +102,7 @@ namespace nukeguardRotatingGyroSmall
             private void ResetLostSubpart()
         {
             SGyroSubpart.Subparts.Clear();
-            SGyro_block.TryGetSubpart("weight", out SGyroSubpart);
+            SGyro_block.TryGetSubpart("SAnimGyro", out SGyroSubpart);
         }
     }
 }
