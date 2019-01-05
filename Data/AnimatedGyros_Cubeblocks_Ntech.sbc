@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <!--Begin BlockCategories -->
-
+<CategoryClasses>
+	<Category xsi:type="MyObjectBuilder_GuiBlockCategoryDefinition">
+      <Id>
+        <TypeId>GuiBlockCategoryDefinition</TypeId>
+        <SubtypeId/>
+      </Id>
+      <DisplayName>Ntech Mods</DisplayName>
+      <Name>Ntech</Name>
+      <ItemIds>
+			<string>SBAnimGyro</string>
+			<string>LBAnimGyro</string>
+			<string>LBAnimGyroInside</string>
+      </ItemIds>
+    </Category>
+</CategoryClasses>
 <!--Begin Cubeblocks definitions-->
   <CubeBlocks>
   
@@ -9,9 +23,61 @@
       <Definition xsi:type="MyObjectBuilder_GyroDefinition">
       <Id>
         <TypeId>Gyro</TypeId>
+        <SubtypeId>LBAnimGyroInside</SubtypeId>
+      </Id>
+      <DisplayName>Animated Gyroscope</DisplayName>
+      <Icon>Textures\GUI\Icons\Cubes\gyro.dds</Icon>
+      <CubeSize>Large</CubeSize>
+      <BlockTopology>TriangleMesh</BlockTopology>
+      <Size x="1" y="1" z="1" />
+      <ModelOffset x="0" y="0" z="0" />
+      <Model>Models\Cubes\LBAnimGyroInside.mwm</Model>
+      <Components>
+        <Component Subtype="SteelPlate" Count="500" />
+        <Component Subtype="Construction" Count="40" />
+        <Component Subtype="LargeTube" Count="4" />
+        <Component Subtype="MetalGrid" Count="50" />
+        <Component Subtype="Motor" Count="4" />
+        <Component Subtype="Computer" Count="5" />
+        <Component Subtype="SteelPlate" Count="100" />
+      </Components>
+      <CriticalComponent Subtype="Computer" Index="0" />
+      <MountPoints>
+		<MountPoint Side="Front" StartX="0.20" StartY="0.00" EndX="0.80" EndY="0.07" />
+		<MountPoint Side="Back" StartX="0.20" StartY="0.00" EndX="0.80" EndY="0.07" />
+		<MountPoint Side="Left" StartX="0.20" StartY="0.00" EndX="0.80" EndY="0.07" />
+		<MountPoint Side="Right" StartX="0.20" StartY="0.00" EndX="0.80" EndY="0.07" />
+		<MountPoint Side="Bottom" StartX="0.20" StartY="0.20" EndX="0.80" EndY="0.80" />
+      </MountPoints>
+      <BuildProgressModels>
+        <Model BuildPercentUpperBound="0.33" File="Models\Cubes\Large\GyroscopeConstruction_1.mwm" />
+        <Model BuildPercentUpperBound="0.66" File="Models\Cubes\Large\GyroscopeConstruction_2.mwm" />
+        <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\GyroscopeConstruction_3.mwm" />
+      </BuildProgressModels>
+      <BlockPairName>AnimGyroscopeInside</BlockPairName>
+	  <Description>Gyroscopes allow ships to orientate using the mouse and stabilize rotating grids. These gyroscopes are animated and look exactly like the vanilla gyros - mostly.
+	  
+	  This gyroscope has a static exterior with a rotating weighted wheel inside.</Description>
+      <MirroringY>Z</MirroringY>
+      <MirroringZ>Y</MirroringZ>
+      <EdgeType>Light</EdgeType>
+      <BuildTimeSeconds>45</BuildTimeSeconds>
+      <PrimarySound>BlockGyroscope</PrimarySound>      
+      <ResourceSinkGroup>Gyro</ResourceSinkGroup>
+      <ForceMagnitude>6.36E+07</ForceMagnitude>
+      <RequiredPowerInput>0.00003</RequiredPowerInput>      
+      <EmissiveColorPreset>Default</EmissiveColorPreset>
+      <DamageEffectId>212</DamageEffectId>
+      <DamagedSound>ParticleHeavyMech</DamagedSound>
+	  <GuiVisible>false</GuiVisible>
+	  <PCU>50</PCU>
+    </Definition>
+	<Definition xsi:type="MyObjectBuilder_GyroDefinition">
+      <Id>
+        <TypeId>Gyro</TypeId>
         <SubtypeId>LBAnimGyro</SubtypeId>
       </Id>
-      <DisplayName>Gyroscope</DisplayName>
+      <DisplayName>Animated Gyroscope</DisplayName>
       <Icon>Textures\GUI\Icons\Cubes\gyro.dds</Icon>
       <CubeSize>Large</CubeSize>
       <BlockTopology>TriangleMesh</BlockTopology>
@@ -40,7 +106,16 @@
         <Model BuildPercentUpperBound="0.66" File="Models\Cubes\Large\GyroscopeConstruction_2.mwm" />
         <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Large\GyroscopeConstruction_3.mwm" />
       </BuildProgressModels>
-      <BlockPairName>Gyroscope</BlockPairName>
+      <BlockPairName>AnimGyroscope</BlockPairName>
+	  <BlockVariants>
+       <BlockVariant>
+          <TypeId>Gyro</TypeId>
+          <SubtypeId>LBAnimGyroInside</SubtypeId>
+        </BlockVariant>
+	  </BlockVariants>
+	  <Description>Gyroscopes allow ships to orientate using the mouse and stabilize rotating grids. These gyroscopes are animated and look exactly like the vanilla gyros - mostly.
+	  
+	  This gyroscope has an externally rotating sphere.</Description>
       <MirroringY>Z</MirroringY>
       <MirroringZ>Y</MirroringZ>
       <EdgeType>Light</EdgeType>
@@ -51,7 +126,8 @@
       <RequiredPowerInput>0.00003</RequiredPowerInput>      
       <EmissiveColorPreset>Default</EmissiveColorPreset>
       <DamageEffectId>212</DamageEffectId>
-      <DamagedSound>ParticleHeavyMech</DamagedSound>
+      <DamagedSound>ParticleHeavyMech</DamagedSound>	  
+	  <PCU>50</PCU>
     </Definition>
 	
     <Definition xsi:type="MyObjectBuilder_GyroDefinition">
@@ -59,7 +135,7 @@
         <TypeId>Gyro</TypeId>
         <SubtypeId>SBAnimGyro</SubtypeId>
       </Id>
-      <DisplayName>Gyroscope</DisplayName>
+      <DisplayName>Animated Gyroscope</DisplayName>
       <Icon>Textures\GUI\Icons\Cubes\gyro.dds</Icon>
       <CubeSize>Small</CubeSize>
       <BlockTopology>TriangleMesh</BlockTopology>
@@ -82,7 +158,8 @@
         <Model BuildPercentUpperBound="0.50" File="Models\Cubes\Small\GyroscopeConstruction_1.mwm" />
         <Model BuildPercentUpperBound="1.00" File="Models\Cubes\Small\GyroscopeConstruction_2.mwm" />
       </BuildProgressModels>
-      <BlockPairName>Gyroscope</BlockPairName>
+      <BlockPairName>AnimGyroscope</BlockPairName>
+	  <Description>Gyroscopes allow ships to orientate using the mouse and stabilize rotating grids. These gyroscopes are animated and look exactly like the vanilla gyros - mostly.</Description>
       <MirroringY>Z</MirroringY>
       <MirroringZ>Y</MirroringZ>
       <EdgeType>Light</EdgeType>
@@ -94,6 +171,7 @@
       <EmissiveColorPreset>Default</EmissiveColorPreset>
       <DamageEffectId>212</DamageEffectId>
       <DamagedSound>ParticleHeavyMech</DamagedSound>
+	  <PCU>50</PCU>
     </Definition>
 <!-- End -->
  </CubeBlocks>
@@ -102,10 +180,10 @@
 <!-- Begin BlockPositions-->
  <BlockPositions>
      <BlockPosition>
-      <Name>AnimatedGyros</Name>
+      <Name>AnimGyroscope</Name>
       <Position>
-        <X>4</X>
-        <Y>25</Y>
+        <X>6</X>
+        <Y>4</Y>
       </Position>
     </BlockPosition>
  </BlockPositions>
