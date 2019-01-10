@@ -17,7 +17,7 @@ namespace nukeguardRotatingGyroSmall
         private float HingePosX = 0f; // Hinge position on the X axis. 0 is center.
         private float HingePosY = -0.051649f; // Hinge position on the Y axis. 0 is center.
         private float HingePosZ = -0.088645f; // Hinge position on the Z axis. 0 is center.
-        private float RotX = 0.01f; // Rotation on the X axis. 0 is no rotation.
+        private float RotX = 0.05f; // Rotation on the X axis. 0 is no rotation.
         private float RotY = 0f; // Rotation on the Y axis. 0 is no rotation.
         private float RotZ = 0f; // Rotation on the Z axis. 0 is no rotation.
         public bool InitSubpart = true;
@@ -44,6 +44,8 @@ namespace nukeguardRotatingGyroSmall
         {
             NeedsUpdate = MyEntityUpdateEnum.NONE;
         }
+
+
         public override void UpdateBeforeSimulation()
         {
             try
@@ -57,7 +59,12 @@ namespace nukeguardRotatingGyroSmall
                     LGyro_block.TryGetSubpart("AnimGyro", out LGyroSubpart);
                     InitSubpart = false;
                 }
-
+                var distanceFromCameraToBlock = Vector3D.DistanceSquared(LGyroSubpart.PositionComp.WorldAABB.Center, MyAPIGateway.Session.Camera.Position) < 10000;
+                if (!MyAPIGateway.Utilities.IsDedicated && distanceFromCameraToBlock)
+                {
+                    var blockCam = LGyroSubpart.PositionComp.WorldVolume;
+                    if (MyAPIGateway.Session.Camera.IsInFrustum(ref blockCam) && LGyro_block.IsWorking) Matrix.CreateRotationX(RotX);
+                }
                 // Checks if subpart is removed (i.e. when changing block color).
                 if (LGyroSubpart.Closed.Equals(true)) ResetLostSubpart();
 
@@ -77,11 +84,14 @@ namespace nukeguardRotatingGyroSmall
                 // This is for your benefit. Remove or change with your logging option before publishing.
                 MyAPIGateway.Utilities.ShowNotification("Error: " + e.Message, 16);
             }
+
+
             /*catch (Exception e)
             {
                 Logging.Instance.WriteLine("Error: " + e.Message);
             }*/
         }
+        
 
         public override void UpdateAfterSimulation()
         {
@@ -97,6 +107,7 @@ namespace nukeguardRotatingGyroSmall
                 var _emoff = LGyro_block.GyroPower;
                 LGyrosubpart.SetEmissiveParts("Emissive", Color.Red, _emoff);
             }
+
         }
 
             private void ResetLostSubpart()
