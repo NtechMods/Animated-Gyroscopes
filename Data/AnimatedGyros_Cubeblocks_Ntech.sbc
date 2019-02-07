@@ -1,5 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<!-- Research Blocks -->
+  <ResearchBlocks> 
+    <ResearchBlock xsi:type="ResearchBlock">
+      <Id Type="MyObjectBuilder_Gyro" Subtype="LBAnimGyro" />
+      <UnlockedByGroups>
+        <GroupSubtype>16</GroupSubtype>
+      </UnlockedByGroups>
+    </ResearchBlock>
+    <ResearchBlock xsi:type="ResearchBlock">
+      <Id Type="MyObjectBuilder_Gyro" Subtype="LBAnimGyroInside" />
+      <UnlockedByGroups>
+        <GroupSubtype>16</GroupSubtype>
+      </UnlockedByGroups>
+    </ResearchBlock>
+    <ResearchBlock xsi:type="ResearchBlock">
+      <Id Type="MyObjectBuilder_Gyro" Subtype="SBAnimGyro" />
+      <UnlockedByGroups>
+        <GroupSubtype>16</GroupSubtype>
+      </UnlockedByGroups>
+    </ResearchBlock>
+   </ResearchBlocks>
+  
+<!-- ResearchGroups -->
+  <ResearchGroups>
+    <ResearchGroup xsi:type="ResearchGroup">
+      <Id Type="MyObjectBuilder_ResearchGroupDefinition" Subtype="AnimatedGyros" />
+      <Members>
+       <BlockId Type="MyObjectBuilder_Gyro" Subtype="LBAnimGyroInside" />
+       <BlockId Type="MyObjectBuilder_Gyro" Subtype="LBAnimGyro" />
+       <BlockId Type="MyObjectBuilder_Gyro" Subtype="SBAnimGyro" />
+      </Members>
+    </ResearchGroup>
+  </ResearchGroups>
+
+
 <!--Begin BlockCategories -->
 <CategoryClasses>
 	<Category xsi:type="MyObjectBuilder_GuiBlockCategoryDefinition">
