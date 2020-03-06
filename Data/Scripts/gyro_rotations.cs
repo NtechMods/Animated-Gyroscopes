@@ -9,72 +9,114 @@ using VRageMath;
 
 namespace nukeguardRotatingGyroSmall
 {
-    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Gyro), false, "LBAnimGyro")]
+    [MyEntityComponentDescriptor(typeof(MyObjectBuilder_Gyro), false, new string[] { "LBAnimGyro", "LBAnimGyroInside", "SBAnimGyro" })] // Here you can add other Gyro SubtypeIds.
     public class RotatingGyroLarge : MyGameLogicComponent
     {
-        public IMyGyro LGyro_block;
-        public MyEntitySubpart LGyroSubpart;
-        private float HingePosX = 0f; // Hinge position on the X axis. 0 is center.
-        private float HingePosY = -0.051649f; // Hinge position on the Y axis. 0 is center.
-        private float HingePosZ = -0.088645f; // Hinge position on the Z axis. 0 is center.
-        private float RotX = 0.01f; // Rotation on the X axis. 0 is no rotation.
-        private float RotY = 0f; // Rotation on the Y axis. 0 is no rotation.
-        private float RotZ = 0f; // Rotation on the Z axis. 0 is no rotation.
-        public bool InitSubpart = true;
-
-        // These are static as their identities shouldnt change across different instances
+        private IMyGyro Gyro_block;
+        private MyEntitySubpart GyroSubpart;
+        private string SubpartName;
+        private float HingePosX;
+        private float HingePosY;
+        private float HingePosZ;
+        private bool InitSubpart = true;
         private Matrix _rotMatrixX;
         private Matrix _rotMatrixY;
         private Matrix _rotMatrixZ;
-		private Matrix newRotMatrixX;
+        private Vector3 HingePos;
+        private Matrix MatrixTransl1;
+        private Matrix MatrixTransl2;
+        private bool EmissivesSetToGreen;
+        private bool EmissivesSetToRed;
+        private float RotationSpeed = 0.02f; // Base rotation speed which will be used when creating subpart rotations.
 
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             NeedsUpdate |= MyEntityUpdateEnum.EACH_FRAME;
-            LGyro_block = (IMyGyro)Entity;
+            Gyro_block = (IMyGyro)Entity;
+            _rotMatrixX = Matrix.Identity;
+            _rotMatrixY = Matrix.Identity;
+            _rotMatrixZ = Matrix.Identity;
 
-            // Init the rot matricies here as you shouldnt need to recompute them
-            // If you want an angle to be zero, use Matrix.Identity instead :)
-            _rotMatrixX = Matrix.CreateRotationX(RotX);
-            _rotMatrixY = Matrix.CreateRotationY(RotY);
-            _rotMatrixZ = Matrix.CreateRotationY(RotZ);
+            // Here you can add different hinge positions and subpart names for the Gyros you have added at the top.
+            switch (Gyro_block.BlockDefinition.SubtypeId)
+            {
+                case "LBAnimGyro":
+                    HingePosX = 0;
+                    HingePosY = -0.051649f;
+                    HingePosZ = -0.088645f;
+                    SubpartName = "AnimGyro";
+                    break;
+                case "LBAnimGyroInside":
+                    HingePosX = 0;
+                    HingePosY = -0.051649f;
+                    HingePosZ = -0.088645f;
+                    SubpartName = "AnimGyroInside";
+                    break;
+                case "SBAnimGyro":
+                    HingePosX = 0;
+                    HingePosY = 0;
+                    HingePosZ = 0;
+                    SubpartName = "SAnimGyro";
+                    break;
+            }
+
+            HingePos = new Vector3(HingePosX, HingePosY, HingePosZ);
+            MatrixTransl1 = Matrix.CreateTranslation(-HingePos);
+            MatrixTransl2 = Matrix.CreateTranslation(HingePos);
         }
 
-        public override void Close()
-        {
-            NeedsUpdate = MyEntityUpdateEnum.NONE;
-        }
+        public override void Close() => NeedsUpdate = MyEntityUpdateEnum.NONE;
+
         public override void UpdateBeforeSimulation()
         {
             try
             {
-                if (!LGyro_block.IsFunctional) return;                // Ignore damaged or build progress blocks.
-                if (LGyro_block.CubeGrid.Physics == null) return;     // Ignore ghost grids (projections).
-				if (LGyro_block.IsWorking) newRotMatrixX = _rotMatrixX;
-                else newRotMatrixX = Matrix.Identity;
-                if (InitSubpart)
+                if (MyAPIGateway.Utilities.IsDedicated || Gyro_block.CubeGrid.Physics == null) return;
+                if (GyroSubpart == null || GyroSubpart.Closed) GetSubpart();
+                if (Gyro_block.IsFunctional && Gyro_block.IsWorking)
                 {
-                    LGyro_block.TryGetSubpart("AnimGyro", out LGyroSubpart);
-                    InitSubpart = false;
-                }
-                var distanceFromCameraToBlock = Vector3D.DistanceSquared(LGyroSubpart.PositionComp.WorldAABB.Center, MyAPIGateway.Session.Camera.Position) < 10000;
-                if (!MyAPIGateway.Utilities.IsDedicated && distanceFromCameraToBlock)
-                {
-                    var blockCam = LGyroSubpart.PositionComp.WorldVolume;
-                    if (MyAPIGateway.Session.Camera.IsInFrustum(ref blockCam) && LGyro_block.IsWorking) Matrix.CreateRotationX(RotX);
-                }
-                // Checks if subpart is removed (i.e. when changing block color).
-                if (LGyroSubpart.Closed.Equals(true)) ResetLostSubpart();
+                    if (!EmissivesSetToGreen)
+                    {
+                        GyroSubpart.SetEmissiveParts("Emissive", Color.Green, Gyro_block.GyroPower);
+                        EmissivesSetToGreen = true;
+                    }
 
-                if (LGyroSubpart != null)
+                    bool camIsCloseToGyro = Vector3D.DistanceSquared(Gyro_block.WorldMatrix.Translation, MyAPIGateway.Session.Camera.Position) < 500;
+                    float gridRotation = Gyro_block.CubeGrid.Physics.AngularVelocity.AbsMax();
+                    if (camIsCloseToGyro && gridRotation > 0)
+                    {
+                        // The following two variables determine how the subpart will behave when the ship is turning.
+                        // They have the same name and only one should be used at a time. Comment the other one so the script doesn't break.
+                        float rotationSpeedModifier = Gyro_block.CubeGrid.Physics.AngularVelocity.Sum;              // This will rotate the subpart in both directions depending on how the ship is turning.
+                        //float rotationSpeedModifier = Gyro_block.CubeGrid.Physics.AngularVelocity.Normalize();    // This will always rotate the subpart in one direction.
+
+                        // Here you can choose on which axis the subpart will rotate and with what speed based on the SubtypeId.
+                        // You can see how the X and Y axis are handled as well as how to increase the rotation speed by 10. 
+                        switch (Gyro_block.BlockDefinition.SubtypeId)
+                        {
+                            case "LBAnimGyro":
+                                _rotMatrixX = Matrix.CreateRotationX(RotationSpeed * rotationSpeedModifier);
+                                break;
+                            case "LBAnimGyroInside":
+                                _rotMatrixY = Matrix.CreateRotationY(RotationSpeed * rotationSpeedModifier * 10);
+                                break;
+                            case "SBAnimGyro":
+                                _rotMatrixX = Matrix.CreateRotationX(RotationSpeed * rotationSpeedModifier);
+                                break;
+                        }
+
+                        Matrix rotMatrix = GyroSubpart.PositionComp.LocalMatrix;
+                        rotMatrix *= MatrixTransl1 * _rotMatrixX * _rotMatrixY * _rotMatrixZ * MatrixTransl2;
+                        GyroSubpart.PositionComp.SetLocalMatrix = rotMatrix;
+                    }
+                }
+                else
                 {
-                    var hingePos = new Vector3(HingePosX, HingePosY, HingePosZ); // This defines the location of a new pivot point.
-                    var MatrixTransl1 = Matrix.CreateTranslation(-(hingePos));
-                    var MatrixTransl2 = Matrix.CreateTranslation(hingePos);
-                    var rotMatrix = LGyroSubpart.PositionComp.LocalMatrix;
-                    // rotMatrix *= (MatrixTransl1 * (Matrix.CreateRotationX(RotX) * Matrix.CreateRotationY(RotY) * Matrix.CreateRotationZ(RotZ)) * MatrixTransl2);
-                    rotMatrix *= (MatrixTransl1 * newRotMatrixX * _rotMatrixY * _rotMatrixZ * MatrixTransl2);
-                    LGyroSubpart.PositionComp.LocalMatrix = rotMatrix;
+                    if (!EmissivesSetToRed)
+                    {
+                        GyroSubpart.SetEmissiveParts("Emissive", Color.Red, Gyro_block.GyroPower);
+                        EmissivesSetToRed = true;
+                    }
                 }
             }
             catch (Exception e)
@@ -82,32 +124,13 @@ namespace nukeguardRotatingGyroSmall
                 // This is for your benefit. Remove or change with your logging option before publishing.
                 MyAPIGateway.Utilities.ShowNotification("Error: " + e.Message, 16);
             }
-            /*catch (Exception e)
-            {
-                Logging.Instance.WriteLine("Error: " + e.Message);
-            }*/
-        }
-        
-        public override void UpdateAfterSimulation()
-        {
-            if (MyAPIGateway.Utilities.IsDedicated) return;
-            MyEntitySubpart LGyrosubpart;
-            if (LGyro_block != null && LGyro_block.IsWorking && LGyro_block.IsFunctional && LGyro_block.TryGetSubpart("AnimGyro", out LGyrosubpart))
-            {
-                var _emcolor = LGyro_block.GyroPower;
-                LGyrosubpart.SetEmissiveParts("Emissive", Color.Green, _emcolor);
-            }
-            else if (LGyro_block != null && LGyro_block.TryGetSubpart("AnimGyro", out LGyrosubpart))
-            {
-                var _emoff = LGyro_block.GyroPower;
-                LGyrosubpart.SetEmissiveParts("Emissive", Color.Red, _emoff);
-            }
         }
 
-            private void ResetLostSubpart()
+        private void GetSubpart()
         {
-            LGyroSubpart.Subparts.Clear();
-            LGyro_block.TryGetSubpart("AnimGyro", out LGyroSubpart);
+            if (!InitSubpart) GyroSubpart.Subparts.Clear();
+            Gyro_block.TryGetSubpart(SubpartName, out GyroSubpart);
+            InitSubpart = false;
         }
     }
 }
